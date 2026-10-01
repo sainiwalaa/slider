@@ -1,0 +1,16 @@
+{
+  "name": "aether-leap",
+  "version": "1.0.0",
+  "private": true,
+  "description": "High-octane 2D sci-fi action platform runner with 100 progressive levels across 10 worlds.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "vite": "^5.2.0"
+  }
+}

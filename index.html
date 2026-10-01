@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Aether Leap</title>
+  <link rel="stylesheet" href="./app/src/main/assets/web/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="game-container">
+    <!-- Game Canvas -->
+    <canvas id="game-canvas"></canvas>
+
+    <!-- Portrait Mode Warning Overlay -->
+    <div id="rotate-device-overlay" class="overlay hidden">
+      <div class="rotate-content">
+        <div class="phone-icon-anim">
+          <div class="phone-screen"></div>
+        </div>
+        <h2 class="rotate-title">ROTATE YOUR PHONE</h2>
+        <p class="rotate-subtitle">Aether Leap is designed for landscape orientation</p>
+      </div>
+    </div>
+
+    <!-- HUD Overlay -->
+    <div id="game-hud" class="hud-layer hidden">
+      <div class="hud-top">
+        <div class="hud-left">
+          <div class="bar-container hp-bar-container">
+            <span class="bar-label">HP</span>
+            <div class="bar-track">
+              <div id="hp-bar-fill" class="bar-fill hp-fill"></div>
+            </div>
+            <span id="hp-text" class="bar-val">100</span>
+          </div>
+          <div class="bar-container stamina-bar-container">
+            <span class="bar-label">NRG</span>
+            <div class="bar-track">
+              <div id="stamina-bar-fill" class="bar-fill stamina-fill"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hud-center">
+          <div class="level-badge">
+            <span id="hud-level-text">LEVEL 1 / 100</span>
+            <span id="hud-theme-text" class="theme-subtitle">NEON CITY</span>
+          </div>
+        </div>
+
+        <div class="hud-right">
+          <div class="hud-stat-pill">
+            <span class="stat-icon">💎</span>
+            <span id="hud-crystals-text">0 / 15</span>
+          </div>
+          <div class="hud-stat-pill score-pill">
+            <span class="stat-icon">★</span>
+            <span id="hud-score-text">0</span>
+          </div>
+          <button id="btn-hud-pause" class="hud-btn-circle" aria-label="Pause">⏸</button>
+        </div>
+      </div>
+
+      <!-- Notification Toast -->
+      <div id="hud-toast" class="hud-toast hidden">CHECKPOINT ACTIVATED</div>
+
+      <!-- Boss Health Bar -->
+      <div id="boss-bar-container" class="boss-bar-container hidden">
+        <div class="boss-header">
+          <span id="boss-name-text">NEXUS OVERLORD</span>
+          <span id="boss-hp-text">100%</span>
+        </div>
+        <div class="boss-bar-track">
+          <div id="boss-bar-fill" class="boss-bar-fill"></div>
+        </div>
+      </div>
+
+      <!-- Mobile Touch Controls -->
+      <div id="touch-controls" class="touch-layer">
+        <div class="touch-cluster touch-left">
+          <button id="ctrl-left" class="touch-btn d-btn" data-key="left">◀</button>
+          <button id="ctrl-duck" class="touch-btn d-btn duck-btn" data-key="duck">▼</button>
+          <button id="ctrl-right" class="touch-btn d-btn" data-key="right">▶</button>
+        </div>
+
+        <div class="touch-cluster touch-right">
+          <button id="ctrl-slide" class="touch-btn action-btn slide-btn" data-key="slide">
+            <span class="btn-sub">SLIDE</span>
+            <span class="btn-symbol">⚡</span>
+          </button>
+          <button id="ctrl-attack" class="touch-btn action-btn attack-btn" data-key="attack">
+            <span class="btn-sub">SLASH</span>
+            <span class="btn-symbol">⚔</span>
+          </button>
+          <button id="ctrl-jump" class="touch-btn action-btn jump-btn" data-key="jump">
+            <span class="btn-sub">JUMP</span>
+            <span class="btn-symbol">▲</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Menu Screen -->
+    <div id="main-menu" class="screen-layer">
+      <div class="menu-content">
+        <div class="game-branding">
+          <div class="glow-orb"></div>
+          <h1 class="game-title">AETHER LEAP</h1>
+          <p class="game-tagline">RUN BEYOND THE LIMIT</p>
+          <div class="title-underline"></div>
+        </div>
+
+        <div class="menu-actions">
+          <button id="btn-play-game" class="menu-btn primary-btn">
+            <span class="btn-shine"></span>
+            <span class="btn-text">PLAY GAME</span>
+          </button>
+          <button id="btn-level-select" class="menu-btn secondary-btn">
+            <span class="btn-text">LEVEL SELECT (1-100)</span>
+          </button>
+          <div class="menu-row">
+            <button id="btn-how-to-play" class="menu-btn small-btn">HOW TO PLAY</button>
+            <button id="btn-settings" class="menu-btn small-btn">SETTINGS</button>
+          </div>
+        </div>
+
+        <div class="menu-footer">
+          <span>100 LEVELS • 10 WORLDS • SCI-FI ACTION RUNNER</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Level Select Screen -->
+    <div id="level-select-menu" class="screen-layer hidden">
+      <div class="level-select-container">
+        <div class="screen-header">
+          <button id="btn-back-from-levels" class="back-btn">◀ BACK</button>
+          <h2 class="screen-title">SELECT LEVEL</h2>
+          <div class="total-crystals-pill">
+            <span>TOTAL 💎</span>
+            <span id="level-select-total-crystals">0</span>
+          </div>
+        </div>
+
+        <div class="world-tabs" id="world-tabs-container"></div>
+
+        <div class="levels-scroll-view">
+          <div class="levels-grid" id="levels-grid-container"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- How To Play Modal -->
+    <div id="how-to-play-modal" class="modal-layer hidden">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>HOW TO PLAY</h3>
+          <button id="btn-close-how-to-play" class="close-modal-btn">✕</button>
+        </div>
+        <div class="modal-body instructions-grid">
+          <div class="instruction-box">
+            <h4>DESKTOP CONTROLS</h4>
+            <ul>
+              <li><kbd>A</kbd> / <kbd>◀</kbd> : Move Left</li>
+              <li><kbd>D</kbd> / <kbd>▶</kbd> : Move Right</li>
+              <li><kbd>W</kbd> / <kbd>Space</kbd> : Jump / Double Jump</li>
+              <li><kbd>S</kbd> / <kbd>▼</kbd> : Duck / Drop through platforms</li>
+              <li><kbd>Shift</kbd> : High-Speed Slide</li>
+              <li><kbd>J</kbd> / <kbd>Z</kbd> : Plasma Blade Slash</li>
+              <li><kbd>Esc</kbd> / <kbd>P</kbd> : Pause</li>
+            </ul>
+          </div>
+          <div class="instruction-box">
+            <h4>MOBILE CONTROLS</h4>
+            <ul>
+              <li><strong>Left Thumb:</strong> Move Left, Right & Duck</li>
+              <li><strong>Right Thumb:</strong> Jump, Slide, Slash</li>
+              <li><strong>Wall Jump:</strong> Slide down walls & tap Jump</li>
+              <li><strong>Double Jump:</strong> Tap Jump again mid-air</li>
+              <li><strong>Slide:</strong> Tap Slide while running to duck obstacles</li>
+            </ul>
+          </div>
+          <div class="instruction-box full-width">
+            <h4>OBJECTIVES</h4>
+            <p>Guide the Aether Runner through 100 levels across 10 dangerous sci-fi worlds. Eliminate cyber enemies with your plasma blade, collect glowing Aether Crystals, trigger checkpoints, and reach the exit portal!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal-layer hidden">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>SETTINGS</h3>
+          <button id="btn-close-settings" class="close-modal-btn">✕</button>
+        </div>
+        <div class="modal-body settings-list">
+          <div class="setting-row">
+            <span class="setting-label">Sound FX</span>
+            <button id="toggle-sfx" class="toggle-switch active">ON</button>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Music & Ambience</span>
+            <button id="toggle-music" class="toggle-switch active">ON</button>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Screen Shake</span>
+            <button id="toggle-shake" class="toggle-switch active">ON</button>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Performance Mode</span>
+            <button id="toggle-performance" class="toggle-switch">OFF</button>
+          </div>
+          <div class="setting-row danger-row">
+            <span class="setting-label">Reset Game Progress</span>
+            <button id="btn-reset-progress" class="danger-btn">RESET</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pause Menu Modal -->
+    <div id="pause-modal" class="modal-layer hidden">
+      <div class="modal-card pause-card">
+        <h2 class="modal-title">GAME PAUSED</h2>
+        <div class="modal-actions-col">
+          <button id="btn-resume-game" class="menu-btn primary-btn">RESUME</button>
+          <button id="btn-pause-checkpoint" class="menu-btn secondary-btn">RESTART CHECKPOINT</button>
+          <button id="btn-pause-settings" class="menu-btn small-btn">SETTINGS</button>
+          <button id="btn-pause-exit" class="menu-btn danger-btn">EXIT TO MENU</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Level Complete Modal -->
+    <div id="level-complete-modal" class="modal-layer hidden">
+      <div class="modal-card victory-card">
+        <div class="victory-header">
+          <div class="victory-icon">✦</div>
+          <h2 class="modal-title victory-title">LEVEL COMPLETE!</h2>
+          <p id="complete-level-title" class="victory-level-name">LEVEL 1: NEON CITY</p>
+        </div>
+
+        <div class="victory-stars" id="victory-stars-container">
+          <span class="star-slot" id="star-1">★</span>
+          <span class="star-slot" id="star-2">★</span>
+          <span class="star-slot" id="star-3">★</span>
+        </div>
+
+        <div class="victory-stats-grid">
+          <div class="v-stat">
+            <span class="v-label">TIME</span>
+            <span id="complete-time-val" class="v-val">00:45</span>
+          </div>
+          <div class="v-stat">
+            <span class="v-label">CRYSTALS</span>
+            <span id="complete-crystals-val" class="v-val">15 / 15</span>
+          </div>
+          <div class="v-stat">
+            <span class="v-label">ENEMIES</span>
+            <span id="complete-enemies-val" class="v-val">6 / 6</span>
+          </div>
+          <div class="v-stat">
+            <span class="v-label">SCORE</span>
+            <span id="complete-score-val" class="v-val">12,450</span>
+          </div>
+        </div>
+
+        <div class="modal-actions-row">
+          <button id="btn-next-level" class="menu-btn primary-btn">NEXT LEVEL ▶</button>
+          <button id="btn-retry-level" class="menu-btn secondary-btn">RETRY</button>
+          <button id="btn-complete-exit" class="menu-btn small-btn">LEVEL SELECT</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Death / Game Over Modal -->
+    <div id="game-over-modal" class="modal-layer hidden">
+      <div class="modal-card death-card">
+        <div class="death-glitch">
+          <h2 class="modal-title death-title">SYSTEM OFFLINE</h2>
+          <p class="death-subtitle">RUNNER WAS ELIMINATED</p>
+        </div>
+        <div class="modal-actions-col">
+          <button id="btn-restart-checkpoint" class="menu-btn primary-btn">RESTART CHECKPOINT</button>
+          <button id="btn-restart-level" class="menu-btn secondary-btn">RESTART LEVEL</button>
+          <button id="btn-game-over-exit" class="menu-btn small-btn">EXIT LEVEL</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./app/src/main/assets/web/game.js"></script>
+</body>
+</html>
