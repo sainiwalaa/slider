@@ -45,9 +45,15 @@
         </div>
 
         <div class="hud-center">
-          <div class="level-badge">
-            <span id="hud-level-text">LEVEL 1 / 100</span>
-            <span id="hud-theme-text" class="theme-subtitle">NEON CITY</span>
+          <div class="mission-pill" id="hud-mission-pill">
+            <span class="mission-icon">🎯</span>
+            <div class="mission-info">
+              <span id="hud-mission-title" class="mission-title">Reach Extraction Gate</span>
+              <span id="hud-mission-prog" class="mission-prog">IN PROGRESS</span>
+            </div>
+          </div>
+          <div class="level-sub-badge">
+            <span id="hud-level-text">LVL 1</span> • <span id="hud-theme-text">NEON CITY</span>
           </div>
         </div>
 
@@ -61,6 +67,25 @@
             <span id="hud-score-text">0</span>
           </div>
           <button id="btn-hud-pause" class="hud-btn-circle" aria-label="Pause">⏸</button>
+        </div>
+      </div>
+
+      <!-- Level Intro Cinematic Card -->
+      <div id="level-intro-card" class="level-intro-card hidden">
+        <div class="intro-world-pill" id="intro-world-name">WORLD 1 • NEON CITY</div>
+        <h2 class="intro-level-title" id="intro-level-title">ROOFTOP SPRINT</h2>
+        <div class="intro-mission-box">
+          <span class="intro-mission-label">MISSION DIRECTIVE</span>
+          <span class="intro-mission-desc" id="intro-mission-desc">Leap across rooftop gaps to reach the extraction portal</span>
+        </div>
+      </div>
+
+      <!-- Mission Complete Toast -->
+      <div id="mission-complete-toast" class="mission-complete-toast hidden">
+        <div class="toast-sparkle">✦</div>
+        <div class="toast-body">
+          <span class="toast-headline">MISSION DIRECTIVE COMPLETE!</span>
+          <span class="toast-subtext" id="toast-subtext">Extraction Gate is Online</span>
         </div>
       </div>
 
@@ -267,6 +292,15 @@
           <div class="v-stat">
             <span class="v-label">SCORE</span>
             <span id="complete-score-val" class="v-val">12,450</span>
+          </div>
+        </div>
+
+        <!-- Gear Progression Unlock Badge -->
+        <div id="complete-unlock-card" class="complete-unlock-card hidden">
+          <div class="unlock-icon-badge">✨</div>
+          <div class="unlock-details">
+            <span class="unlock-tag">NEW GEAR UNLOCKED</span>
+            <span id="unlock-item-name" class="unlock-item-name">Cyber Glider Suit</span>
           </div>
         </div>
 

@@ -289,6 +289,19 @@
       }, tempo);
     }
 
+    playJumpPad() {
+      if (!this.sfxEnabled || !this.ctx) return;
+      this.playTone(420, 'sine', 0.18, 0.25, 0.01);
+      setTimeout(() => this.playTone(840, 'triangle', 0.22, 0.2, 0.01), 50);
+    }
+
+    playMissionComplete() {
+      if (!this.sfxEnabled || !this.ctx) return;
+      this.playTone(523.25, 'sine', 0.12, 0.25, 0.01);
+      setTimeout(() => this.playTone(659.25, 'sine', 0.12, 0.25, 0.01), 90);
+      setTimeout(() => this.playTone(783.99, 'triangle', 0.28, 0.3, 0.01), 180);
+    }
+
     stopMusic() {
       if (this.musicTimer) {
         clearInterval(this.musicTimer);
@@ -310,6 +323,88 @@
     { name: "Toxic Wastelands", sky: "#0a1405", ground: "#1b330e", accent: "#76ff03", hazard: "#ff0055", particle: "#b2ff59" },
     { name: "Nexus Core", sky: "#030208", ground: "#150f29", accent: "#ff0055", hazard: "#00f0ff", particle: "#ffffff" }
   ];
+
+  // --- GEAR & SUIT PROGRESSION UNLOCKS ---
+  const WORLD_GEAR_UNLOCKS = {
+    1: "Cyber Glider Suit",
+    11: "Aegis Kinetic Plate",
+    21: "Magma Heat Shield",
+    31: "Prism Phase Cloak",
+    41: "Orbital Thruster Boots",
+    51: "Quantum Blade Matrix",
+    61: "Bio-Luminescent Weave",
+    71: "Cryo-Fiber Armor",
+    81: "Void Shadow Exosuit",
+    91: "Singularity Core Drive"
+  };
+
+  // --- SECTOR TITLES & MISSION SYSTEM ---
+  function getSectorTitle(levelNum) {
+    const worldIndex = Math.floor((levelNum - 1) / 10);
+    const sectorIndex = (levelNum - 1) % 10;
+    const worldNames = [
+      ["Rooftop Sprint", "Neon Highway", "Vector Alley", "Skyline Overpass", "Cyber Plaza", "Holo-Bypass", "Pulse Viaduct", "Grid Junction", "Aether Highway", "Citadel Gate"],
+      ["Vault Entry", "Memory Core", "Data Chasm", "Sub-Server Hub", "Logic Trench", "Archive Corridor", "Silicon Bridge", "Buffer Conduit", "Bit Stream", "Mainframe Gateway"],
+      ["Foundry Floor", "Magma Aqueduct", "Slag Falls", "Furnace Runway", "Smelting Grid", "Thermal Vent", "Blast Chasm", "Cinder Walk", "Crucible Path", "Core Caldera"],
+      ["Prism Caverns", "Glowstone Spire", "Crystal Gorge", "Amethyst Bridge", "Resonance Tunnel", "Refraction Chasm", "Shimmer Ledge", "Quartz Runway", "Geode Hollow", "Apex Chamber"],
+      ["Docking Bay", "Solar Array", "Zero-G Concourse", "Cargo Tramway", "Airlock Bypass", "Habitation Ring", "Reactor Spire", "Exo-Plaza", "Orbital Catwalk", "Spaceward Gate"],
+      ["Phase Shift", "Quantum Flux", "Tachyon Trace", "Entropy Bridge", "Entanglement Way", "Superposition", "Chrono-Spire", "Matrix Nexus", "Wave Collapse", "Singularity Door"],
+      ["Lichen Canopy", "Biolume Spores", "Fungal Arch", "Mycelium Span", "Phosphor Grove", "Sporefall Chasm", "Flora Skyway", "Chloroplast Run", "Root Highway", "Canopy Heart"],
+      ["Cryo Ridge", "Glacial Crevasse", "Frostbite Span", "Permafrost Track", "Sub-Zero Conduit", "Blizzard Pass", "Ice Crystal Span", "Sleet Viaduct", "Avalanche Way", "Frozen Citadel"],
+      ["Shadow Spire", "Abyssal Gate", "Null Horizon", "Dark Matter Span", "Void Crossing", "Spectral Rail", "Echo Canyon", "Obsidian Path", "Event Horizon", "Citadel Throne"],
+      ["Apex Approach", "Singularity Trench", "Graviton Conduit", "Dark Energy Span", "Core Perimeter", "Reality Shear", "Dimensional Rift", "Time Dilation", "Monolith Gate", "Nexus Core"]
+    ];
+    return worldNames[worldIndex] ? worldNames[worldIndex][sectorIndex] : `Sector ${sectorIndex + 1}`;
+  }
+
+  function generateMission(levelNum, collectiblesCount, enemiesCount) {
+    if (levelNum === 50) {
+      return {
+        type: 'boss',
+        title: 'Defeat Magma Sentinel',
+        desc: 'Annihilate the Magma Sentinel guarding the core extraction portal.',
+        target: 1,
+        current: 0
+      };
+    }
+    if (levelNum === 100) {
+      return {
+        type: 'boss',
+        title: 'Defeat Nexus Overlord',
+        desc: 'Destroy the Nexus Overlord to stabilize the quantum timeline.',
+        target: 1,
+        current: 0
+      };
+    }
+    const mode = levelNum % 3;
+    if (mode === 1) {
+      return {
+        type: 'gate',
+        title: 'Reach Extraction Gate',
+        desc: 'Sprint across sector platforms and reach the extraction gate alive.',
+        target: 1,
+        current: 0
+      };
+    } else if (mode === 2) {
+      const target = Math.max(2, Math.min(collectiblesCount, 3 + (levelNum % 4)));
+      return {
+        type: 'crystals',
+        title: 'Harvest Aether Cores',
+        desc: `Collect at least ${target} glowing Aether Cores along the route.`,
+        target: target,
+        current: 0
+      };
+    } else {
+      const target = Math.max(1, Math.min(enemiesCount, 2 + (levelNum % 3)));
+      return {
+        type: 'enemies',
+        title: 'Neutralize Sentries',
+        desc: `Eliminate ${target} patrol droids with your photon energy blade.`,
+        target: target,
+        current: 0
+      };
+    }
+  }
 
   // --- SAVE SYSTEM ---
   class SaveSystem {
@@ -378,6 +473,7 @@
       const worldIdx = Math.floor((levelNum - 1) / 10);
       const theme = WORLD_THEMES[Math.min(WORLD_THEMES.length - 1, worldIdx)];
       const rand = pseudoRandom(levelNum * 9973 + 431);
+      const levelTitle = getSectorTitle(levelNum);
 
       // Level length scales gradually
       const baseLength = 2600 + (levelNum - 1) * 90;
@@ -389,9 +485,23 @@
       const enemies = [];
       const collectibles = [];
       const checkpoints = [];
+      const jumpPads = [];
+      const lasers = [];
 
       // Starting platform (safe runway)
-      platforms.push({ x: 0, y: 600, w: 700, h: 250, type: 'solid' });
+      platforms.push({
+        x: 0,
+        y: 600,
+        w: 700,
+        h: 250,
+        type: 'solid',
+        isMoving: false,
+        isCrumbling: false,
+        crumbleTimer: 0,
+        collapseTimer: 0,
+        isCollapsed: false,
+        jitterX: 0
+      });
 
       let cursorX = 620;
       let cursorY = 600;
@@ -416,6 +526,7 @@
 
         const isOneWay = rand() < 0.25;
         const isMoving = levelNum >= 7 && rand() < (0.12 + Math.min(0.2, levelNum * 0.002));
+        const isCrumbling = levelNum >= 4 && rand() < 0.18;
 
         platforms.push({
           x: cursorX,
@@ -429,14 +540,42 @@
           moveSpeed: 0.8 + rand() * 0.8,
           origX: cursorX,
           origY: cursorY,
-          moveOffset: rand() * Math.PI * 2
+          moveOffset: rand() * Math.PI * 2,
+          isCrumbling: isCrumbling,
+          crumbleTimer: 0,
+          collapseTimer: 0,
+          isCollapsed: false,
+          jitterX: 0
         });
+
+        // Jump pad for thrilling vertical boosts (levels >= 3)
+        if (levelNum >= 3 && !isCrumbling && pWidth > 220 && rand() < 0.22) {
+          jumpPads.push({
+            x: cursorX + pWidth * 0.72,
+            y: cursorY - 8,
+            w: 38,
+            h: 8
+          });
+        }
 
         // Spikes placed in middle of wider platforms with plenty of runway before/after
         if (pWidth > 260 && rand() < (0.2 + Math.min(0.25, levelNum * 0.004))) {
           const spikeW = 36 + Math.floor(rand() * 32);
-          const spikeX = cursorX + pWidth * 0.4;
+          const spikeX = cursorX + pWidth * 0.38;
           hazards.push({ type: 'spike', x: spikeX, y: cursorY - 18, w: spikeW, h: 18 });
+        }
+
+        // Pulsating laser barriers (levels >= 6)
+        if (levelNum >= 6 && pWidth > 270 && rand() < 0.22) {
+          lasers.push({
+            x: cursorX + pWidth * 0.52,
+            y: cursorY - 70,
+            w: 12,
+            h: 70,
+            cycleTime: 3.2,
+            timer: rand() * 3.2,
+            active: true
+          });
         }
 
         // Enemies placed with fair reaction room and controlled speeds
@@ -491,7 +630,19 @@
       // Final goal platform
       const goalPlatformX = cursorX + 70;
       const goalY = 600;
-      platforms.push({ x: goalPlatformX, y: goalY, w: 700, h: 250, type: 'solid' });
+      platforms.push({
+        x: goalPlatformX,
+        y: goalY,
+        w: 700,
+        h: 250,
+        type: 'solid',
+        isMoving: false,
+        isCrumbling: false,
+        crumbleTimer: 0,
+        collapseTimer: 0,
+        isCollapsed: false,
+        jitterX: 0
+      });
 
       const goal = { x: goalPlatformX + 380, y: goalY - 60, w: 56, h: 90 };
 
@@ -506,6 +657,7 @@
         levelNum,
         worldIdx,
         theme,
+        title: levelTitle,
         width: goalPlatformX + 750,
         height: levelHeight,
         startX: 140,
@@ -515,6 +667,8 @@
         enemies,
         collectibles,
         checkpoints,
+        jumpPads,
+        lasers,
         goal,
         boss
       };
@@ -919,6 +1073,7 @@
       const headY = this.y - this.h;
 
       for (const p of level.platforms) {
+        if (p.isCollapsed) continue;
         if (p.type === 'solid') {
           const isVerticallyInSideWall = (feetY > p.y + 10 && headY < p.y + p.h - 5);
           if (isVerticallyInSideWall) {
@@ -951,6 +1106,7 @@
       const playerRight = this.x + halfW;
 
       for (const p of level.platforms) {
+        if (p.isCollapsed) continue;
         const platLeft = p.x;
         const platRight = p.x + p.w;
 
@@ -968,6 +1124,11 @@
             this.vy = 0;
             this.onGround = true;
             this.canDoubleJump = true;
+
+            // Trigger crumbling platform countdown on contact
+            if (p.isCrumbling && p.crumbleTimer === 0) {
+              p.crumbleTimer = 0.55;
+            }
 
             if (p.isMoving) {
               if (p.moveAxis === 'x') {
@@ -1013,6 +1174,7 @@
             e.alive = false;
             sound.playEnemyDeath();
             particles.createExplosion(e.x, e.y - e.h / 2, '#00f0ff', 16);
+            if (this.onEnemyKilled) this.onEnemyKilled();
           } else {
             sound.playHit();
             e.x += this.dir * 12; // slight knockback
@@ -1035,6 +1197,7 @@
             b.alive = false;
             sound.playEnemyDeath();
             particles.createExplosion(b.x, b.y - b.h / 2, '#ff007f', 24);
+            if (this.onBossKilled) this.onBossKilled();
           }
         }
       }
@@ -1317,8 +1480,32 @@
 
       this.score = 0;
       this.crystalsCollected = 0;
+      this.enemiesDefeated = 0;
       this.levelStartTime = 0;
       this.lastFrameTime = 0;
+
+      // Mission & Progression system
+      this.mission = null;
+      this.missionToastShown = false;
+      this.introCardTimeout = null;
+
+      this.player.onEnemyKilled = () => {
+        this.enemiesDefeated++;
+        this.score += 250;
+        if (this.mission && this.mission.type === 'enemies') {
+          this.mission.current++;
+          this.checkMissionProgress();
+        }
+      };
+
+      this.player.onBossKilled = () => {
+        this.enemiesDefeated++;
+        this.score += 2000;
+        if (this.mission && this.mission.type === 'boss') {
+          this.mission.current++;
+          this.checkMissionProgress();
+        }
+      };
 
       // Clean single-source input state
       this.input = {
@@ -1816,21 +2003,58 @@
 
       this.score = 0;
       this.crystalsCollected = 0;
+      this.enemiesDefeated = 0;
       this.levelStartTime = performance.now();
       this.lastFrameTime = performance.now();
       this.resetAllInputs();
       this.state = 'playing';
+
+      this.mission = generateMission(
+        levelNum,
+        this.currentLevel.collectibles.length,
+        this.currentLevel.enemies.length
+      );
+      this.missionToastShown = false;
 
       // Snap camera directly to starting area
       this.cameraX = Math.max(0, this.player.x - this.viewportWidth * 0.34);
       this.cameraY = Math.max(0, Math.min(this.currentLevel.height - this.viewportHeight, this.player.y - this.viewportHeight * 0.55));
 
       this.showScreen('game-hud');
-      document.getElementById('hud-level-text').textContent = `LEVEL ${levelNum} / 100`;
-      document.getElementById('hud-theme-text').textContent = this.currentLevel.theme.name;
-      this.updateHUD();
+      document.getElementById('hud-level-text').textContent = `LVL ${levelNum}`;
+      document.getElementById('hud-theme-text').textContent = this.currentLevel.theme.name.toUpperCase();
 
+      const introCard = document.getElementById('level-intro-card');
+      if (introCard) {
+        document.getElementById('intro-world-name').textContent = `WORLD ${this.currentLevel.worldIdx + 1} • ${this.currentLevel.theme.name.toUpperCase()}`;
+        document.getElementById('intro-level-title').textContent = `LEVEL ${levelNum}: ${this.currentLevel.title.toUpperCase()}`;
+        document.getElementById('intro-mission-desc').textContent = this.mission.desc;
+        introCard.classList.remove('hidden');
+        if (this.introCardTimeout) clearTimeout(this.introCardTimeout);
+        this.introCardTimeout = setTimeout(() => {
+          if (introCard) introCard.classList.add('hidden');
+        }, 2800);
+      }
+
+      this.updateHUD();
       this.sound.startThemeMusic(this.currentLevel.worldIdx);
+    }
+
+    checkMissionProgress() {
+      if (!this.mission || this.missionToastShown) return;
+      if (this.mission.current >= this.mission.target) {
+        this.missionToastShown = true;
+        this.sound.playMissionComplete();
+        const toast = document.getElementById('mission-complete-toast');
+        if (toast) {
+          const subText = document.getElementById('toast-subtext');
+          if (subText) subText.textContent = 'Extraction Gate Online';
+          toast.classList.remove('hidden');
+          setTimeout(() => {
+            if (toast) toast.classList.add('hidden');
+          }, 2400);
+        }
+      }
     }
 
     openLevelSelect() {
@@ -1920,6 +2144,26 @@
       document.getElementById('hud-crystals-text').textContent = `${this.crystalsCollected} / ${totalCrystals}`;
       document.getElementById('hud-score-text').textContent = this.score;
 
+      // Mission Pill HUD
+      const missionTitleEl = document.getElementById('hud-mission-title');
+      const missionProgEl = document.getElementById('hud-mission-prog');
+      if (this.mission && missionTitleEl && missionProgEl) {
+        missionTitleEl.textContent = this.mission.title;
+        if (this.mission.current >= this.mission.target) {
+          missionProgEl.textContent = 'OBJECTIVE COMPLETE';
+          missionProgEl.style.color = '#00ffaa';
+        } else {
+          missionProgEl.style.color = '#00f0ff';
+          if (this.mission.type === 'crystals') {
+            missionProgEl.textContent = `${this.mission.current} / ${this.mission.target} CORES`;
+          } else if (this.mission.type === 'enemies') {
+            missionProgEl.textContent = `${this.mission.current} / ${this.mission.target} DEFEATED`;
+          } else {
+            missionProgEl.textContent = 'IN PROGRESS';
+          }
+        }
+      }
+
       const bossBar = document.getElementById('boss-health-container');
       if (this.currentLevel && this.currentLevel.boss && this.currentLevel.boss.alive) {
         bossBar.classList.remove('hidden');
@@ -1941,6 +2185,11 @@
       this.sound.playLevelComplete();
       this.sound.stopMusic();
 
+      if (this.mission && this.mission.type === 'gate') {
+        this.mission.current = 1;
+        this.checkMissionProgress();
+      }
+
       const totalTime = Math.round((performance.now() - this.levelStartTime) / 1000);
       const totalCrystals = this.currentLevel.collectibles.length;
       const crystalRatio = totalCrystals > 0 ? (this.crystalsCollected / totalCrystals) : 1;
@@ -1953,16 +2202,35 @@
       this.save.completeLevel(this.currentLevelNum, stars, this.crystalsCollected, finalScore, totalTime);
 
       document.getElementById('complete-level-title').textContent =
-        `LEVEL ${this.currentLevelNum}: ${this.currentLevel.theme.name}`;
+        `LEVEL ${this.currentLevelNum}: ${(this.currentLevel.title || this.currentLevel.theme.name).toUpperCase()}`;
       document.getElementById('complete-time-val').textContent =
         `${Math.floor(totalTime / 60)}:${(totalTime % 60).toString().padStart(2, '0')}`;
       document.getElementById('complete-crystals-val').textContent =
         `${this.crystalsCollected} / ${totalCrystals}`;
+      
+      const enemiesTotal = this.currentLevel.enemies.length;
+      const enemiesValEl = document.getElementById('complete-enemies-val');
+      if (enemiesValEl) {
+        enemiesValEl.textContent = `${this.enemiesDefeated} / ${enemiesTotal}`;
+      }
+
       document.getElementById('complete-score-val').textContent = finalScore;
 
       for (let s = 1; s <= 3; s++) {
         const starEl = document.getElementById(`star-${s}`);
         if (starEl) starEl.classList.toggle('earned', s <= stars);
+      }
+
+      // Check gear progression unlock
+      const unlockCard = document.getElementById('complete-unlock-card');
+      const unlockItemEl = document.getElementById('unlock-item-name');
+      if (WORLD_GEAR_UNLOCKS[this.currentLevelNum]) {
+        if (unlockCard && unlockItemEl) {
+          unlockItemEl.textContent = WORLD_GEAR_UNLOCKS[this.currentLevelNum];
+          unlockCard.classList.remove('hidden');
+        }
+      } else {
+        if (unlockCard) unlockCard.classList.add('hidden');
       }
 
       document.getElementById('level-complete-modal').classList.remove('hidden');
@@ -1994,13 +2262,99 @@
             p.y = p.origY + Math.sin(p.moveOffset) * p.moveRange;
           }
         }
+
+        // Crumbling platform state
+        if (p.isCrumbling) {
+          if (p.crumbleTimer > 0) {
+            p.crumbleTimer -= rawDt;
+            p.jitterX = (Math.random() - 0.5) * 4;
+            if (Math.random() < 0.25) {
+              this.particles.add(
+                p.x + Math.random() * p.w,
+                p.y,
+                (Math.random() - 0.5) * 1.5,
+                -Math.random() * 2,
+                '#ffaa00',
+                2,
+                8,
+                'spark'
+              );
+            }
+            if (p.crumbleTimer <= 0) {
+              p.isCollapsed = true;
+              p.collapseTimer = 2.4;
+              p.jitterX = 0;
+              this.sound.playTone(160, 'sawtooth', 0.25, 0.2, 0.01);
+              this.particles.createExplosion(p.x + p.w / 2, p.y + 10, '#ff5500', 12);
+            }
+          } else if (p.isCollapsed) {
+            p.collapseTimer -= rawDt;
+            if (p.collapseTimer <= 0) {
+              p.isCollapsed = false;
+              p.crumbleTimer = 0;
+              p.jitterX = 0;
+              this.particles.createExplosion(p.x + p.w / 2, p.y + 10, '#00f0ff', 10);
+            }
+          }
+        }
       }
 
       // Player update
       this.player.update(this.input, level, this.sound, this.particles, dtScale, rawDt);
 
-      // Hazards check
       const halfW = this.player.w / 2;
+
+      // Jump Pads check
+      if (level.jumpPads) {
+        for (const jp of level.jumpPads) {
+          if (
+            this.player.x + halfW > jp.x &&
+            this.player.x - halfW < jp.x + jp.w &&
+            this.player.y >= jp.y - 4 &&
+            this.player.y <= jp.y + jp.h + 8 &&
+            this.player.vy >= 0
+          ) {
+            this.player.y = jp.y;
+            this.player.vy = -14.2;
+            this.player.canDoubleJump = true;
+            this.sound.playJumpPad();
+            for (let i = 0; i < 9; i++) {
+              this.particles.add(
+                jp.x + jp.w * (i / 8),
+                jp.y,
+                (Math.random() - 0.5) * 2,
+                -3 - Math.random() * 3,
+                '#00f0ff',
+                3,
+                14,
+                'spark'
+              );
+            }
+          }
+        }
+      }
+
+      // Lasers check
+      if (level.lasers) {
+        for (const lz of level.lasers) {
+          lz.timer = (lz.timer + rawDt) % lz.cycleTime;
+          lz.active = lz.timer < 1.8;
+
+          if (lz.active) {
+            if (
+              this.player.x + halfW > lz.x - lz.w / 2 &&
+              this.player.x - halfW < lz.x + lz.w / 2 &&
+              this.player.y > lz.y &&
+              this.player.y - this.player.h < lz.y + lz.h
+            ) {
+              this.player.takeDamage(20, this.sound, this.particles);
+              this.shakeIntensity = 8;
+            }
+          }
+        }
+      }
+
+      // Hazards check
       for (const h of level.hazards) {
         if (
           this.player.x + halfW > h.x &&
@@ -2024,6 +2378,10 @@
             this.score += 250;
             this.sound.playCrystal();
             this.particles.createExplosion(c.x, c.y, '#ffd700', 8);
+            if (this.mission && this.mission.type === 'crystals') {
+              this.mission.current++;
+              this.checkMissionProgress();
+            }
           }
         }
       }
@@ -2165,7 +2523,8 @@
 
       // Platforms
       for (const p of level.platforms) {
-        const screenX = p.x - this.cameraX;
+        if (p.isCollapsed) continue;
+        const screenX = p.x - this.cameraX + (p.jitterX || 0);
         const screenY = p.y - this.cameraY;
         if (screenX + p.w < -50 || screenX > w + 50) continue;
 
@@ -2191,6 +2550,77 @@
             ctx.beginPath();
             ctx.moveTo(screenX + gx, screenY + 4);
             ctx.lineTo(screenX + gx, screenY + Math.min(p.h, 200));
+            ctx.stroke();
+          }
+
+          // Warning crack indicators when crumbling
+          if (p.isCrumbling && p.crumbleTimer > 0) {
+            ctx.strokeStyle = '#ffaa00';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(screenX + 10, screenY + 2);
+            ctx.lineTo(screenX + p.w * 0.4, screenY + 12);
+            ctx.lineTo(screenX + p.w * 0.7, screenY + 4);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Jump Pads
+      if (level.jumpPads) {
+        for (const jp of level.jumpPads) {
+          const sx = jp.x - this.cameraX;
+          const sy = jp.y - this.cameraY;
+          if (sx + jp.w < -20 || sx > w + 20) continue;
+
+          ctx.fillStyle = '#00f0ff';
+          ctx.shadowColor = '#00f0ff';
+          ctx.shadowBlur = 8;
+          ctx.fillRect(sx, sy, jp.w, jp.h);
+          ctx.shadowBlur = 0;
+
+          // Kinetic arrow symbol
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.moveTo(sx + jp.w / 2, sy - 4);
+          ctx.lineTo(sx + jp.w / 2 + 6, sy + 3);
+          ctx.lineTo(sx + jp.w / 2 - 6, sy + 3);
+          ctx.closePath();
+          ctx.fill();
+        }
+      }
+
+      // Lasers
+      if (level.lasers) {
+        for (const lz of level.lasers) {
+          const sx = lz.x - this.cameraX;
+          const sy = lz.y - this.cameraY;
+          if (sx + 20 < -20 || sx > w + 20) continue;
+
+          ctx.fillStyle = '#1e293b';
+          ctx.fillRect(sx - 6, sy, 12, 6);
+          ctx.fillRect(sx - 6, sy + lz.h - 6, 12, 6);
+
+          if (lz.active) {
+            ctx.strokeStyle = '#ff0055';
+            ctx.lineWidth = 4;
+            ctx.shadowColor = '#ff0055';
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.moveTo(sx, sy + 6);
+            ctx.lineTo(sx, sy + lz.h - 6);
+            ctx.stroke();
+
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+          } else {
+            ctx.strokeStyle = 'rgba(255, 0, 85, 0.2)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(sx, sy + 6);
+            ctx.lineTo(sx, sy + lz.h - 6);
             ctx.stroke();
           }
         }

@@ -220,6 +220,218 @@ html, body {
   color: #fff;
 }
 
+.mission-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(10, 16, 36, 0.88);
+  border: 1px solid rgba(0, 240, 255, 0.5);
+  border-radius: 20px;
+  padding: 3px 14px;
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
+  backdrop-filter: blur(8px);
+}
+
+.mission-icon {
+  font-size: 13px;
+}
+
+.mission-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.mission-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.5px;
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mission-prog {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: #00ffaa;
+  letter-spacing: 1px;
+}
+
+.level-sub-badge {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--cyan);
+  letter-spacing: 1px;
+  margin-top: 2px;
+  text-align: center;
+  opacity: 0.85;
+}
+
+/* Level Intro Cinematic Overlay Card */
+.level-intro-card {
+  position: absolute;
+  top: 22%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(8, 12, 28, 0.92);
+  border: 1.5px solid var(--cyan);
+  border-radius: 16px;
+  padding: 16px 28px;
+  box-shadow: 0 0 35px rgba(0, 240, 255, 0.4), inset 0 0 20px rgba(0, 240, 255, 0.15);
+  backdrop-filter: blur(12px);
+  z-index: 100;
+  pointer-events: none;
+  animation: introPopIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: center;
+}
+
+@keyframes introPopIn {
+  from { opacity: 0; transform: translate(-50%, -20px) scale(0.94); }
+  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
+.intro-world-pill {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--cyan);
+  background: rgba(0, 240, 255, 0.15);
+  border: 1px solid rgba(0, 240, 255, 0.4);
+  padding: 3px 12px;
+  border-radius: 12px;
+  margin-bottom: 6px;
+}
+
+.intro-level-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 20px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 2px;
+  text-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+}
+
+.intro-mission-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding-top: 6px;
+}
+
+.intro-mission-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--yellow);
+}
+
+.intro-mission-desc {
+  font-size: 13px;
+  font-weight: 600;
+  color: #e6f1ff;
+  margin-top: 2px;
+}
+
+/* Mission Complete Celebration Toast */
+.mission-complete-toast {
+  position: absolute;
+  top: 16%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, rgba(20, 40, 20, 0.95), rgba(10, 25, 20, 0.95));
+  border: 2px solid #00ffaa;
+  border-radius: 30px;
+  padding: 10px 24px;
+  box-shadow: 0 0 30px rgba(0, 255, 170, 0.5), inset 0 0 15px rgba(0, 255, 170, 0.2);
+  backdrop-filter: blur(10px);
+  z-index: 105;
+  pointer-events: none;
+  animation: completePop 0.4s cubic-bezier(0.17, 0.89, 0.32, 1.28);
+}
+
+@keyframes completePop {
+  0% { opacity: 0; transform: translate(-50%, -15px) scale(0.85); }
+  100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
+.toast-sparkle {
+  font-size: 22px;
+  color: #00ffaa;
+  animation: spinSparkle 2s linear infinite;
+}
+
+@keyframes spinSparkle {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.toast-headline {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  font-weight: 900;
+  color: #00ffaa;
+  letter-spacing: 1px;
+}
+
+.toast-subtext {
+  font-size: 11px;
+  color: #fff;
+  opacity: 0.9;
+}
+
+/* Unlock Gear Badge in Victory Modal */
+.complete-unlock-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(0, 240, 255, 0.12);
+  border: 1.5px solid var(--cyan);
+  border-radius: 12px;
+  padding: 10px 16px;
+  margin: 10px 0 14px 0;
+  box-shadow: 0 0 18px var(--cyan-glow);
+  width: 100%;
+}
+
+.unlock-icon-badge {
+  font-size: 24px;
+}
+
+.unlock-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.unlock-tag {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--yellow);
+}
+
+.unlock-item-name {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
 .level-badge {
   display: flex;
   flex-direction: column;
@@ -391,8 +603,8 @@ html, body {
 }
 
 .touch-btn {
-  background: rgba(14, 20, 44, 0.82);
-  border: 1.5px solid rgba(0, 240, 255, 0.5);
+  background: radial-gradient(circle at 35% 35%, rgba(22, 34, 68, 0.78), rgba(9, 14, 30, 0.88));
+  border: 1.5px solid rgba(0, 240, 255, 0.45);
   color: var(--cyan);
   border-radius: 50%;
   display: flex;
@@ -400,10 +612,11 @@ html, body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  touch-action: none;
+  touch-action: none !important;
   position: relative;
-  backdrop-filter: blur(8px);
-  transition: transform 0.05s, border-color 0.1s, box-shadow 0.1s, background-color 0.1s;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5), inset 0 0 8px rgba(0, 240, 255, 0.15);
+  transition: transform 0.06s ease-out, border-color 0.1s, box-shadow 0.1s, background 0.1s;
   pointer-events: auto !important;
   z-index: 35;
   user-select: none;
@@ -411,41 +624,60 @@ html, body {
 }
 
 .touch-btn:active, .touch-btn.active {
-  transform: scale(0.92);
-  background: rgba(0, 240, 255, 0.35);
+  transform: scale(0.91);
+  background: radial-gradient(circle at 35% 35%, rgba(0, 240, 255, 0.4), rgba(12, 28, 56, 0.95));
   border-color: var(--cyan);
-  box-shadow: 0 0 18px var(--cyan);
+  box-shadow: 0 0 22px var(--cyan), inset 0 0 14px var(--cyan);
 }
 
 .d-btn {
   width: 58px;
   height: 58px;
-  font-size: 20px;
+  font-size: 22px;
 }
 
 .duck-btn {
-  width: 50px;
-  height: 50px;
-  font-size: 16px;
-  opacity: 0.9;
+  width: 52px;
+  height: 52px;
+  font-size: 18px;
+  opacity: 0.92;
 }
 
 .action-btn {
-  width: 64px;
-  height: 64px;
+  width: 62px;
+  height: 62px;
 }
 
 .jump-btn {
   width: 72px;
   height: 72px;
-  border-color: rgba(0, 255, 170, 0.7);
+  border-color: rgba(0, 255, 170, 0.65);
   color: #00ffaa;
+  background: radial-gradient(circle at 35% 35%, rgba(10, 45, 30, 0.8), rgba(6, 24, 18, 0.9));
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(0, 255, 170, 0.2);
 }
 
 .jump-btn:active, .jump-btn.active {
-  background: rgba(0, 255, 170, 0.4);
+  background: radial-gradient(circle at 35% 35%, rgba(0, 255, 170, 0.45), rgba(8, 40, 26, 0.95));
   border-color: #00ffaa;
-  box-shadow: 0 0 20px #00ffaa;
+  box-shadow: 0 0 24px #00ffaa, inset 0 0 16px #00ffaa;
+}
+
+.attack-btn {
+  border-color: rgba(0, 240, 255, 0.65);
+  color: var(--cyan);
+}
+
+.slide-btn {
+  border-color: rgba(255, 215, 0, 0.6);
+  color: var(--yellow);
+  background: radial-gradient(circle at 35% 35%, rgba(45, 38, 12, 0.78), rgba(24, 20, 8, 0.9));
+}
+
+.slide-btn:active, .slide-btn.active {
+  background: radial-gradient(circle at 35% 35%, rgba(255, 215, 0, 0.45), rgba(40, 32, 10, 0.95));
+  border-color: var(--yellow);
+  box-shadow: 0 0 22px var(--yellow), inset 0 0 14px var(--yellow);
 }
 
 .slide-btn {
