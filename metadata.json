@@ -2,5 +2,7 @@
   "name": "Aether Leap",
   "description": "High-speed 2D sci-fi action platform runner featuring 100 progressive levels across 10 worlds with dynamic combat, fluid parkour physics, and atmospheric visuals.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

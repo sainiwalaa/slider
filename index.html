@@ -274,6 +274,7 @@
           <button id="btn-next-level" class="menu-btn primary-btn">NEXT LEVEL ▶</button>
           <button id="btn-retry-level" class="menu-btn secondary-btn">RETRY</button>
           <button id="btn-complete-exit" class="menu-btn small-btn">LEVEL SELECT</button>
+          <button id="btn-complete-main-menu" class="menu-btn danger-btn">MAIN MENU</button>
         </div>
       </div>
     </div>
@@ -282,13 +283,14 @@
     <div id="game-over-modal" class="modal-layer hidden">
       <div class="modal-card death-card">
         <div class="death-glitch">
-          <h2 class="modal-title death-title">SYSTEM OFFLINE</h2>
+          <h2 class="modal-title death-title">GAME OVER</h2>
           <p class="death-subtitle">RUNNER WAS ELIMINATED</p>
         </div>
         <div class="modal-actions-col">
-          <button id="btn-restart-checkpoint" class="menu-btn primary-btn">RESTART CHECKPOINT</button>
-          <button id="btn-restart-level" class="menu-btn secondary-btn">RESTART LEVEL</button>
-          <button id="btn-game-over-exit" class="menu-btn small-btn">EXIT LEVEL</button>
+          <button id="btn-restart-level" class="menu-btn primary-btn">RETRY</button>
+          <button id="btn-restart-checkpoint" class="menu-btn secondary-btn">RESTART CHECKPOINT</button>
+          <button id="btn-game-over-level-select" class="menu-btn small-btn">LEVEL SELECT</button>
+          <button id="btn-game-over-exit" class="menu-btn danger-btn">MAIN MENU</button>
         </div>
       </div>
     </div>

@@ -373,6 +373,9 @@ html, body {
   justify-content: space-between;
   align-items: flex-end;
   pointer-events: none !important;
+  touch-action: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
   z-index: 30;
 }
 
@@ -381,6 +384,9 @@ html, body {
   align-items: center;
   gap: 12px;
   pointer-events: auto !important;
+  touch-action: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
   z-index: 32;
 }
 
@@ -969,8 +975,14 @@ kbd {
 
 .modal-actions-row {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 8px;
   width: 100%;
+}
+
+.modal-actions-row .menu-btn {
+  flex: 1 1 110px;
 }
 
 .modal-title {
