@@ -2,7 +2,8 @@
  * Aether Leap - TypeScript Main Entry Point
  */
 
-// Load game engine and styles
-import '../app/src/main/assets/web/style.css';
+// Load styles and game engine
+import './style.css';
+import './game';
 
 console.log('Aether Leap initialized successfully.');
